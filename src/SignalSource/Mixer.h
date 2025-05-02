@@ -13,7 +13,11 @@ public:
   ~Mixer() override;
 
   float nextSample(float sampleRate) override;
-  void reset() override;
+  void setChannelPattern(size_t channelIndex,
+                         const std::array<bool, PULSES> &pattern);
+  void updateChannelPatternStep(size_t channelIndex, bool stepState,
+                                float timeInLoop);
+  void setChannelSignalType(size_t channelIndex, SignalType type);
   void setChannelFrequency(size_t channelIndex, size_t frequency);
   void setChannelVolume(size_t channelIndex, size_t amplitude);
   void setChannelPosX(size_t channelIndex, size_t x);

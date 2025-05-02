@@ -9,9 +9,11 @@
 
 class Channel {
 public:
-  Channel() {}
+  Channel();
+  ~Channel();
   float nextSample(float timeInLoop);
-  void setSignalType(SignalType type, float freq);
+  void setSignalType(SignalType type);
+  void setPattern(const std::array<bool, PULSES> &pattern);
   void updatePatternStep(bool stepState, float timeInLoop);
   void setFrequency(size_t frequency);
   void setVolume(float volume);
@@ -23,9 +25,12 @@ public:
   void reset();
 
 private:
+  float calculateFadeFactor(float timeInLoop);
+  size_t calculateCurrentSampleInStep(float timeInLoop);
   std::shared_ptr<Signal> mSignal;
-  std::array<bool, BARS * TIME> mPattern;
+  std::array<bool, PULSES> mPattern;
   float mVolume;
+  bool mLastPatternState;
   size_t mPos_x;
   size_t mPos_y;
 };

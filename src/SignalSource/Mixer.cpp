@@ -12,6 +12,21 @@ Mixer::~Mixer() {
     channel->reset();
   }
 }
+void Mixer::setChannelSignalType(size_t channelIndex, SignalType type) {
+  if (channelIndex < mChannels.size()) {
+    mChannels[channelIndex]->setSignalType(type);
+  }
+}
+
+void Mixer::setChannelPattern(size_t channelIndex,
+                              const std::array<bool, PULSES> &pattern) {
+  mChannels[channelIndex]->setPattern(pattern);
+}
+void Mixer::updateChannelPatternStep(size_t channelIndex, bool stepState,
+                                     float timeInLoop) {
+  mChannels[channelIndex]->updatePatternStep(stepState, timeInLoop);
+}
+
 void Mixer::setChannelFrequency(size_t channelIndex, size_t frequency) {
   if (channelIndex < mChannels.size()) {
     mChannels[channelIndex]->setFrequency(frequency);
@@ -32,10 +47,10 @@ void Mixer::setChannelPosY(size_t channelIndex, size_t y) {
     mChannels[channelIndex]->setPosY(y);
   }
 }
-float Mixer::nextSample(float sampleRate) {
+float Mixer::nextSample(float timeInLoop) {
   float output = 0.0f;
   for (auto &channel : mChannels) {
-    output += channel->nextSample(sampleRate);
+    output += channel->nextSample(timeInLoop);
   }
   return output;
 }

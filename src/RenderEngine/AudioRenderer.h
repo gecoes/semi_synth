@@ -8,10 +8,12 @@
 
 class AudioRenderer {
 public:
-  AudioRenderer() = default;
+  AudioRenderer();
+  AudioRenderer(std::shared_ptr<Transport> transport,
+                std::shared_ptr<SignalSource> signalSource);
   ~AudioRenderer() = default;
 
-  void renderAudio(float sampleRate);
+  void renderAudioBuffer(float *outputBuffer, size_t bufferSize);
 
   void setTransport(std::shared_ptr<Transport> transport);
 
@@ -20,6 +22,7 @@ public:
 private:
   std::shared_ptr<Transport> mTransport;
   std::shared_ptr<SignalSource> mSignalSource;
+  float processSample();
 };
 
 #endif // AUDIORENDERER_H
