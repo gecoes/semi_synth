@@ -1,15 +1,17 @@
-add_executable(test_auidio_loop
-    main.cpp
-)
+find_package(GTest REQUIRED)
 
-target_link_libraries(test_auidio_loop
+add_executable(IOTests main.cpp)
+
+target_link_libraries(IOTests
+  PRIVATE
+    GTest::gtest
+    GTest::gtest_main
     RenderEngine
     SignalSource
     io_alsa_output
 )
-target_include_directories(test_auidio_loop PRIVATE
-    ${PROJECT_SOURCE_DIR}/src/RenderEngine
-    ${PROJECT_SOURCE_DIR}/src/SignalSource
-    ${PROJECT_SOURCE_DIR}/src/IO
-)
+
+add_test(NAME IOTests COMMAND IOTests)
+
+    
 
