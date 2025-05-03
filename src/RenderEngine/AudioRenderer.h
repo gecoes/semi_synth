@@ -19,6 +19,11 @@ public:
 
   void setSignalSource(std::shared_ptr<SignalSource> signalSource);
 
+  std::shared_ptr<Transport> getTransport() const { return mTransport; }
+  std::shared_ptr<SignalSource> getSignalSource() const {
+    return mSignalSource;
+  }
+
 private:
   std::shared_ptr<Transport> mTransport;
   std::shared_ptr<SignalSource> mSignalSource;

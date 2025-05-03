@@ -14,14 +14,14 @@ public:
 
   float nextSample(float sampleRate) override;
   void setChannelPattern(size_t channelIndex,
-                         const std::array<bool, PULSES> &pattern);
+                         const std::array<bool, PULSES> &pattern) override;
   void updateChannelPatternStep(size_t channelIndex, bool stepState,
-                                float timeInLoop);
-  void setChannelSignalType(size_t channelIndex, SignalType type);
-  void setChannelFrequency(size_t channelIndex, size_t frequency);
-  void setChannelVolume(size_t channelIndex, size_t amplitude);
-  void setChannelPosX(size_t channelIndex, size_t x);
-  void setChannelPosY(size_t channelIndex, size_t y);
+                                float timeInLoop) override;
+  void setChannelSignalType(size_t channelIndex, SignalType type) override;
+  void setChannelFrequency(size_t channelIndex, size_t frequency) override;
+  void setChannelVolume(size_t channelIndex, size_t amplitude) override;
+  void setChannelPosX(size_t channelIndex, size_t x) override;
+  void setChannelPosY(size_t channelIndex, size_t y) override;
 
 private:
   std::vector<std::shared_ptr<Channel>> mChannels;
