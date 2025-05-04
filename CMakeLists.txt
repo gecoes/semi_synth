@@ -12,7 +12,12 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(googletest)
 
+
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(ALSA REQUIRED alsa)
+
 add_subdirectory(src/IO)
 add_subdirectory(src/RenderEngine)
 add_subdirectory(src/SignalSource)
 add_subdirectory(src/test)
+add_subdirectory(src/frontend)

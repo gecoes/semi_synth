@@ -25,7 +25,7 @@ public:
                              SND_PCM_FORMAT_FLOAT_LE, // format de dades: 32-bit
                                                       // float (Little Endian)
                              SND_PCM_ACCESS_RW_INTERLEAVED, // accés intercalat
-                             1,     // 2 canals (estèreo)
+                             2,     // 2 canals (estèreo)
                              48000, // taxa de mostreig: 48 kHz (o la que sigui)
                              32,    // període de retard (mostres)
                              500000); // Latència (en microsegons)

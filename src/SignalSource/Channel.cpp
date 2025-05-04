@@ -24,7 +24,7 @@ float Channel::nextSample(float timeInLoop) {
 
   float fadeFactor = patternChanged ? calculateFadeFactor(timeInLoop) : 1.0f;
 
-  return mPattern[currentStep] ? mSignal->nextSample(timeInLoop) * fadeFactor
+  return mPattern[currentStep] ? mSignal->nextSample() * fadeFactor * mVolume
                                : 0.0f;
 }
 
@@ -46,17 +46,17 @@ size_t Channel::calculateCurrentSampleInStep(float timeInLoop) {
 void Channel::setSignalType(SignalType type) {
   switch (type) {
   case SignalType::SINE:
-    mSignal = std::make_shared<SineWave>();
+    mSignal = std::make_shared<SineWave>(mSignal->getFrequency());
     break;
   case SignalType::SQUARE:
-    mSignal = std::make_shared<SquareWave>();
+    mSignal = std::make_shared<SquareWave>(mSignal->getFrequency());
     break;
   case SignalType::SAW:
-    mSignal = std::make_shared<SawtoothWave>();
+    mSignal = std::make_shared<SawtoothWave>(mSignal->getFrequency());
     break;
   case SignalType::SILENCE:
   default:
-    mSignal = std::make_shared<SilentSignal>();
+    mSignal = std::make_shared<SilentSignal>(mSignal->getFrequency());
     break;
   }
 }

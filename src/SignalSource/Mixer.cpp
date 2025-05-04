@@ -33,9 +33,7 @@ void Mixer::setChannelFrequency(size_t channelIndex, size_t frequency) {
   }
 }
 void Mixer::setChannelVolume(size_t channelIndex, size_t amplitude) {
-  if (channelIndex < mChannels.size()) {
-    mChannels[channelIndex]->setVolume(amplitude);
-  }
+  mChannels[channelIndex]->setVolume(amplitude);
 }
 void Mixer::setChannelPosX(size_t channelIndex, size_t x) {
   if (channelIndex < mChannels.size()) {
@@ -63,4 +61,7 @@ std::pair<float, float> Mixer::nextSampleStereo(float timeInLoop) {
     right += sample * channel->getPosX();
   }
   return {left, right};
+}
+std::vector<std::shared_ptr<Channel>> Mixer::getChannels() const {
+  return mChannels;
 }

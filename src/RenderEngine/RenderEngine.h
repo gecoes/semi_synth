@@ -9,7 +9,7 @@
 #include <memory>
 #include <thread>
 
-#define BUFFER_SIZE 512
+#define BUFFER_SIZE 1024 // 512 samples per channel
 
 class RenderEngine {
 public:

@@ -5,14 +5,22 @@ add_library(io_alsa_output
 AlsaOutput.cpp
 )
 
-# Cerca ALSA via pkg-config
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(ALSA REQUIRED alsa)
+add_library(io_lib MockInputCLI.cpp)
 
-# Inclou les capçaleres i enllaça les llibreries
+target_include_directories(io_lib
+PUBLIC
+    ${ALSA_INCLUDE_DIRS}
+    ${PROJECT_SOURCE_DIR}/src/IO
+    ${PROJECT_SOURCE_DIR}/src/SignalSource
+    ${PROJECT_SOURCE_DIR}/src/RenderEngine
+)
+
 target_include_directories(io_alsa_output
 PUBLIC
     ${ALSA_INCLUDE_DIRS}
+    ${PROJECT_SOURCE_DIR}/src/IO
+    ${PROJECT_SOURCE_DIR}/src/SignalSource
+    ${PROJECT_SOURCE_DIR}/src/RenderEngine
 )
 
 target_link_libraries(io_alsa_output

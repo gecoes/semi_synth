@@ -8,7 +8,7 @@ public:
   Signal(float frequency);
   Signal(Signal const &other) = default;
   virtual ~Signal();
-  virtual float nextSample(float timeInLoop) = 0;
+  virtual float nextSample() = 0;
   virtual void reset() = 0;
   void setFrequency(float frequency);
   void setAmplitude(float amplitude);
@@ -16,8 +16,11 @@ public:
   float getAmplitude() const;
 
 protected:
+  void updatePhase();
   float mFrequency;
   float mAmplitude;
+  float mPhase;
+  float mSampleRate;
 };
 
 enum class SignalType { SINE, SQUARE, SAW, SILENCE };
@@ -29,7 +32,7 @@ public:
   SineWave(SineWave const &other) : Signal(other) {}
   ~SineWave() override {}
   void reset() override {}
-  float nextSample(float timeInLoop) override;
+  float nextSample() override;
 };
 
 class SquareWave : public Signal {
@@ -39,7 +42,7 @@ public:
   SquareWave(SquareWave const &other) : Signal(other) {}
   ~SquareWave() override {}
   void reset() override {}
-  float nextSample(float timeInLoop) override;
+  float nextSample() override;
 };
 
 class SawtoothWave : public Signal {
@@ -49,7 +52,7 @@ public:
   SawtoothWave(SawtoothWave const &other) : Signal(other) {}
   ~SawtoothWave() override {}
   void reset() override {}
-  float nextSample(float timeInLoop) override;
+  float nextSample() override;
 };
 
 class SilentSignal : public Signal {
@@ -59,7 +62,7 @@ public:
   SilentSignal(SilentSignal const &other) : Signal(other) {}
   ~SilentSignal() override {}
   void reset() override {}
-  float nextSample(float timeInLoop) override { return 0.0f; }
+  float nextSample() override { return 0.0f; }
 };
 
 #endif

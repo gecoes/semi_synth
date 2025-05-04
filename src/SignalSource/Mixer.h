@@ -13,6 +13,7 @@ public:
   ~Mixer() override;
 
   float nextSample(float sampleRate) override;
+  std::vector<std::shared_ptr<Channel>> getChannels() const override;
   std::pair<float, float> nextSampleStereo(float timeInLoop) override;
   void setChannelPattern(size_t channelIndex,
                          const std::array<bool, PULSES> &pattern) override;

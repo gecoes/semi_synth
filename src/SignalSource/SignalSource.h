@@ -3,6 +3,7 @@
 
 #include "Channel.h"
 #include <memory>
+#include <vector>
 
 class SignalSource {
 public:
@@ -10,6 +11,7 @@ public:
   virtual std::pair<float, float> nextSampleStereo(float timeInLoop) = 0;
   virtual void reset() {}
   virtual ~SignalSource() = default;
+  virtual std::vector<std::shared_ptr<Channel>> getChannels() const = 0;
   virtual void setChannelFrequency(size_t channelIndex, size_t frequency) = 0;
   virtual void setChannelVolume(size_t channelIndex, size_t amplitude) = 0;
   virtual void setChannelPosX(size_t channelIndex, size_t x) = 0;
