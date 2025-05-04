@@ -54,3 +54,13 @@ float Mixer::nextSample(float timeInLoop) {
   }
   return output;
 }
+std::pair<float, float> Mixer::nextSampleStereo(float timeInLoop) {
+  float left = 0.0f;
+  float right = 0.0f;
+  for (auto &channel : mChannels) {
+    float sample = channel->nextSample(timeInLoop);
+    left += sample * (1 - channel->getPosX());
+    right += sample * channel->getPosX();
+  }
+  return {left, right};
+}

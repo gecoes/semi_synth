@@ -7,6 +7,7 @@
 class SignalSource {
 public:
   virtual float nextSample(float sampleRate) = 0;
+  virtual std::pair<float, float> nextSampleStereo(float timeInLoop) = 0;
   virtual void reset() {}
   virtual ~SignalSource() = default;
   virtual void setChannelFrequency(size_t channelIndex, size_t frequency) = 0;

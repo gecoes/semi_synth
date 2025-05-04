@@ -27,7 +27,7 @@ public:
 private:
   std::shared_ptr<Transport> mTransport;
   std::shared_ptr<SignalSource> mSignalSource;
-  float processSample();
+  std::pair<float, float> processSample();
 };
 
 #endif // AUDIORENDERER_H
