@@ -1,6 +1,6 @@
 #include "ImageRenderer.h"
 
-ImageRenderer::ImageRenderer() : mTransport(nullptr), mSignalSource(nullptr) {}
+ImageRenderer::ImageRenderer() : mSignalSource(nullptr) {}
 ImageRenderer::~ImageRenderer() { stopRendering(); }
 void ImageRenderer::renderImage(const std::string &imagePath) {
   // Implementació de la renderització d'imatges

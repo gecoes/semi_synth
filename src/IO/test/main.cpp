@@ -8,7 +8,7 @@ int main() {
   AlsaOutput alsaOutput;
   RenderEngineFactory engineFactory;
   auto engine = engineFactory.createDefault();
-  engine->setOutputSource(std::make_shared<AlsaOutput>(alsaOutput));
+  engine->setAudioOutput(std::make_shared<AlsaOutput>(alsaOutput));
   engine->start();
 
   std::this_thread::sleep_for(std::chrono::seconds(5));

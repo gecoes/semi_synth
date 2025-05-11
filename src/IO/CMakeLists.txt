@@ -5,7 +5,8 @@ add_library(io_alsa_output
 AlsaOutput.cpp
 )
 
-add_library(io_lib InputCLI.cpp)
+add_library(io_lib InputCLI.cpp KeyboardInput.cpp
+)
 
 target_include_directories(io_lib
 PUBLIC

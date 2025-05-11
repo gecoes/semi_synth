@@ -1,13 +1,7 @@
 add_library(RenderEngine
     AudioRenderer.cpp
-    AudioRenderer.h
-    Transport.h
-    Transport.cpp
-    RenderEngine.h
     RenderEngine.cpp
-    RenderEngineFactory.h
     RenderEngineFactory.cpp
-    ImageRenderer.h
     ImageRenderer.cpp
 )
 
