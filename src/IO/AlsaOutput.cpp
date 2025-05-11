@@ -1,9 +1,9 @@
-#include "OutputSource.h"
+#include "AudioOutput.h"
 #include <alsa/asoundlib.h>
 #include <iostream>
 #include <vector>
 
-class AlsaOutput : public OutputSource {
+class AlsaOutput : public AudioOutput {
 public:
   AlsaOutput() : handle(nullptr) {}
 
