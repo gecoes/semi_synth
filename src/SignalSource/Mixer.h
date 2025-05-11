@@ -21,6 +21,7 @@ public:
                            float frequency) override;
   void setChannelVolume(size_t channelIndex, size_t signalIndex,
                         float amplitude) override;
+  void deactivateChannels() override;
   void setChannelPosX(size_t channelIndex, size_t x) override;
   void setChannelPosY(size_t channelIndex, size_t y) override;
 

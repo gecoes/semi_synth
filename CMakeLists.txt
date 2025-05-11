@@ -16,6 +16,8 @@ FetchContent_MakeAvailable(googletest)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(ALSA REQUIRED alsa)
 
+find_package(SDL2 REQUIRED)
+
 add_subdirectory(src/IO)
 add_subdirectory(src/RenderEngine)
 add_subdirectory(src/SignalSource)

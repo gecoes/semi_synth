@@ -7,21 +7,24 @@
 constexpr float TIME_PER_SAMPLE = 1.0f / SAMPLE_RATE;
 
 Channel::Channel()
-    : mSignals(4, std::make_shared<SineWave>()), mPos_x(0), mPos_y(0),
+    : mSignals(4, std::make_shared<SineWave>()), mPos_x(50), mPos_y(50),
       mFadeTarget(0.0f), mFadeCurrent(0.0f), mIsActive(false) {}
 
 float Channel::updateFadeFactor() {
+  const float fadeStep = 1.0f / FADER_SAMPLE_LENGTH;
+
   if (mFadeCurrent < mFadeTarget) {
-    mFadeCurrent += TIME_PER_SAMPLE / FADER_SAMPLE_LENGTH;
-    if (mFadeCurrent >= mFadeTarget) {
+    mFadeCurrent += fadeStep;
+    if (mFadeCurrent > mFadeTarget) {
       mFadeCurrent = mFadeTarget;
     }
   } else if (mFadeCurrent > mFadeTarget) {
-    mFadeCurrent -= TIME_PER_SAMPLE / FADER_SAMPLE_LENGTH;
-    if (mFadeCurrent <= mFadeTarget) {
+    mFadeCurrent -= fadeStep;
+    if (mFadeCurrent < mFadeTarget) {
       mFadeCurrent = mFadeTarget;
     }
   }
+
   return mFadeCurrent;
 }
 
@@ -40,8 +43,7 @@ float Channel::nextSample() {
   if (std::abs(mFadeCurrent) < 0.0001f && mFadeTarget == 0.0f) {
     mIsActive = false; // Deactivate the channel if the fade-out is complete
   }
-  return (signalOutput * fadeFactor) /
-         mSignals.size(); // The max volume is 1.0f we normalize the output
+  return (signalOutput * fadeFactor) / mSignals.size();
 }
 
 float Channel::getSignalFrequency(size_t signalIndex) const {
@@ -85,6 +87,7 @@ void Channel::setSignalType(size_t signalIndex, SignalType type) {
 
 void Channel::activateChannel() {
   std::lock_guard<std::mutex> lock(mMutex);
+  mFadeCurrent = 0;
   mFadeTarget = 1;
   mIsActive = true;
 }

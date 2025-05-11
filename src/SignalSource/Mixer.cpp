@@ -69,7 +69,8 @@ std::pair<float, float> Mixer::nextSampleStereo() {
                              0.0f, 1.0f);
       left += sample * (1.0f - pan);
       right += sample * pan;
-    }
+    } else
+      continue;
   }
   left = normalizeOutput(left);
   right = normalizeOutput(right);
@@ -90,4 +91,10 @@ float Mixer::normalizeOutput(float output) const {
     output /= static_cast<float>(activeCount);
   }
   return output;
+}
+
+void Mixer::deactivateChannels() {
+  for (auto &channel : mChannels) {
+    channel->deactivateChannel();
+  }
 }

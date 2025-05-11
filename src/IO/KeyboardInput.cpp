@@ -9,7 +9,8 @@ KeyboardInput::KeyboardInput()
     : mEditMode(false), mSelectedChannel(0), mSelectedSignal(0), mExit(false) {
   SDL_Init(SDL_INIT_VIDEO); // Necessari per capturar teclat
   SDL_Window *window =
-      SDL_CreateWindow("Synth Input", 0, 0, 100, 100, SDL_WINDOW_HIDDEN);
+      SDL_CreateWindow("Synth Input", SDL_WINDOWPOS_CENTERED,
+                       SDL_WINDOWPOS_CENTERED, 200, 100, SDL_WINDOW_SHOWN);
 }
 
 KeyboardInput::~KeyboardInput() { SDL_Quit(); }
@@ -17,17 +18,25 @@ KeyboardInput::~KeyboardInput() { SDL_Quit(); }
 void KeyboardInput::processInput(SignalSource &signalSource) {
   SDL_Event event;
   while (SDL_PollEvent(&event)) {
-    if (event.type == SDL_QUIT) {
+    switch (event.type) {
+    case SDL_QUIT:
       mExit = true;
-    } else if (event.type == SDL_KEYDOWN) {
+      break;
+    case SDL_KEYDOWN:
       handleKeyDown(event.key.keysym.sym, signalSource);
-    } else if (event.type == SDL_KEYUP) {
+      break;
+    case SDL_KEYUP:
       handleKeyUp(event.key.keysym.sym, signalSource);
+      break;
+    default:
+      // Ignora altres esdeveniments com el moviment del ratolí
+      break;
     }
   }
 }
 
 void KeyboardInput::handleKeyDown(SDL_Keycode key, SignalSource &signalSource) {
+  std::cout << "Key pressed: " << key << std::endl;
   if (key == SDLK_ESCAPE) {
     mExit = true;
     return;
@@ -40,7 +49,9 @@ void KeyboardInput::handleKeyDown(SDL_Keycode key, SignalSource &signalSource) {
   if (mEditMode) {
     if (key >= SDLK_0 && key <= SDLK_9) {
       mSelectedChannel = key - SDLK_0;
+      signalSource.deactivateChannels();
       std::cout << "Selected channel: " << mSelectedChannel << std::endl;
+      signalSource.getChannels()[mSelectedChannel]->activateChannel();
       return;
     }
     if (key == SDLK_q)

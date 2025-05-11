@@ -14,6 +14,7 @@ public:
   virtual ~SignalSource() = default;
 
   virtual std::vector<std::shared_ptr<Channel>> getChannels() const = 0;
+  virtual void deactivateChannels() = 0;
   virtual void setChannelFrequency(size_t channelIndex, size_t signalIndex,
                                    float frequency) = 0;
   virtual void setChannelVolume(size_t channelIndex, size_t signalIndex,

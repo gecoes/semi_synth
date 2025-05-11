@@ -51,6 +51,7 @@ void RenderEngine::loop() {
 }
 
 void RenderEngine::start() {
+  mAudioOutput->initialize();
   mRunning = true;
   mThread = std::thread(&RenderEngine::loop, this);
 }
