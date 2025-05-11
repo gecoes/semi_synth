@@ -1,13 +1,15 @@
 // KeyboardInput.h
-#ifndef KEYBOARDINPUT_H
-#define KEYBOARDINPUT_H
+#ifndef SDLKEYBOARDINPUT_H
+#define SDLKEYBOARDINPUT_H
 
 #include "InputSource.h"
-#include <string>
+#include <SDL2/SDL.h>
+#include <set>
 
 class KeyboardInput : public InputSource {
 public:
   KeyboardInput();
+  ~KeyboardInput() override;
 
   void processInput(SignalSource &signalSource) override;
   bool isEditMode() const override;
@@ -15,10 +17,14 @@ public:
   bool shouldExit() const;
 
 private:
+  void handleKeyDown(SDL_Keycode key, SignalSource &signalSource);
+  void handleKeyUp(SDL_Keycode key, SignalSource &signalSource);
+
   bool mEditMode;
   int mSelectedChannel;
   int mSelectedSignal;
   bool mExit;
+  std::set<SDL_Keycode> mPressedKeys;
 };
 
-#endif // KEYBOARDINPUT_H
+#endif // SDLKEYBOARDINPUT_H

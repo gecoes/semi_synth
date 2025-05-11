@@ -44,6 +44,22 @@ float Channel::nextSample() {
          mSignals.size(); // The max volume is 1.0f we normalize the output
 }
 
+float Channel::getSignalFrequency(size_t signalIndex) const {
+  std::lock_guard<std::mutex> lock(mMutex);
+  if (signalIndex < mSignals.size()) {
+    return mSignals[signalIndex]->getFrequency();
+  }
+  return 0.0f;
+}
+
+float Channel::getSignalAmplitude(size_t signalIndex) const {
+  std::lock_guard<std::mutex> lock(mMutex);
+  if (signalIndex < mSignals.size()) {
+    return mSignals[signalIndex]->getAmplitude();
+  }
+  return 0.0f;
+}
+
 void Channel::setSignalType(size_t signalIndex, SignalType type) {
   std::lock_guard<std::mutex> lock(mMutex);
   switch (type) {
