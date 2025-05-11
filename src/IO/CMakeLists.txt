@@ -5,7 +5,7 @@ add_library(io_alsa_output
 AlsaOutput.cpp
 )
 
-add_library(io_lib MockInputCLI.cpp)
+add_library(io_lib InputCLI.cpp)
 
 target_include_directories(io_lib
 PUBLIC

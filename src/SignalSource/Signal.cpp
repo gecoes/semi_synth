@@ -19,7 +19,9 @@ Signal::~Signal() {}
 
 void Signal::setFrequency(float frequency) { mFrequency = frequency; }
 
-void Signal::setAmplitude(float amplitude) { mAmplitude = amplitude; }
+void Signal::setAmplitude(float amplitude) {
+  mAmplitude = amplitude <= 1.0f ? amplitude : 1.0f;
+}
 
 float Signal::getFrequency() const { return mFrequency; }
 

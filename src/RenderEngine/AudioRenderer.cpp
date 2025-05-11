@@ -1,14 +1,12 @@
 #include "AudioRenderer.h"
 
-AudioRenderer::AudioRenderer() : mTransport(nullptr), mSignalSource(nullptr) {}
-AudioRenderer::AudioRenderer(std::shared_ptr<Transport> transport,
-                             std::shared_ptr<SignalSource> signalSource)
-    : mTransport(transport), mSignalSource(signalSource) {}
+AudioRenderer::AudioRenderer() : mSignalSource(nullptr) {}
+AudioRenderer::AudioRenderer(std::shared_ptr<SignalSource> signalSource)
+    : mSignalSource(signalSource) {}
 
 std::pair<float, float> AudioRenderer::processSample() {
-  if (mTransport && mSignalSource) {
-    mTransport->advance();
-    return mSignalSource->nextSampleStereo(mTransport->getInLoop());
+  if (mSignalSource) {
+    return mSignalSource->nextSampleStereo();
   }
   return std::make_pair(0.0f, 0.0f);
 }
@@ -20,10 +18,6 @@ void AudioRenderer::renderAudioBuffer(float *outputBuffer, size_t bufferSize) {
     outputBuffer[i * 2] = sample.first;
     outputBuffer[i * 2 + 1] = sample.second;
   }
-}
-
-void AudioRenderer::setTransport(std::shared_ptr<Transport> transport) {
-  mTransport = transport;
 }
 
 void AudioRenderer::setSignalSource(

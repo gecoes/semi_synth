@@ -25,5 +25,5 @@ int main() {
 
 void updateFrequency(float frequency, RenderEngine &engine) {
   auto mixer = engine.getAudioRenderer()->getSignalSource();
-  mixer->setChannelFrequency(0, frequency);
+  mixer->setChannelFrequency(0, 0, frequency);
 }

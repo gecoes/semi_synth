@@ -1,88 +1,105 @@
 #include "Channel.h"
 #include <iostream>
 
+#define SAMPLE_RATE 48000
+
 #define FADER_SAMPLE_LENGTH 500
 constexpr float TIME_PER_SAMPLE = 1.0f / SAMPLE_RATE;
-constexpr float STEP_LENGTH = LOOP_LENGTH / PULSES;
-constexpr float STEP_SAMPLES = STEP_LENGTH / TIME_PER_SAMPLE;
 
 Channel::Channel()
-    : mSignal(std::make_shared<SilentSignal>()), mVolume(0.0f), mPos_x(0),
-      mPos_y(0) {
-  mPattern.fill(true);
+    : mSignals(4, std::make_shared<SineWave>()), mPos_x(0), mPos_y(0),
+      mFadeTarget(0.0f), mFadeCurrent(0.0f), mIsActive(false) {}
+
+float Channel::updateFadeFactor() {
+  if (mFadeCurrent < mFadeTarget) {
+    mFadeCurrent += TIME_PER_SAMPLE / FADER_SAMPLE_LENGTH;
+    if (mFadeCurrent >= mFadeTarget) {
+      mFadeCurrent = mFadeTarget;
+    }
+  } else if (mFadeCurrent > mFadeTarget) {
+    mFadeCurrent -= TIME_PER_SAMPLE / FADER_SAMPLE_LENGTH;
+    if (mFadeCurrent <= mFadeTarget) {
+      mFadeCurrent = mFadeTarget;
+    }
+  }
+  return mFadeCurrent;
 }
 
 Channel::~Channel() {}
-float Channel::nextSample(float timeInLoop) {
-  int currentStep =
-      static_cast<int>((timeInLoop / LOOP_LENGTH) * PULSES) % PULSES;
-
-  bool patternChanged = (currentStep + 1 < mPattern.size()) &&
-                        (mPattern[currentStep] != mLastPatternState ||
-                         mPattern[currentStep] != mPattern[currentStep + 1]);
-  mLastPatternState = mPattern[currentStep];
-
-  float fadeFactor = patternChanged ? calculateFadeFactor(timeInLoop) : 1.0f;
-
-  return mPattern[currentStep] ? mSignal->nextSample() * fadeFactor * mVolume
-                               : 0.0f;
-}
-
-float Channel::calculateFadeFactor(float timeInLoop) {
-  float sampleInStep = calculateCurrentSampleInStep(timeInLoop);
-  if (sampleInStep <= FADER_SAMPLE_LENGTH) {
-    return sampleInStep / FADER_SAMPLE_LENGTH;
-  } else if (sampleInStep >= STEP_SAMPLES - FADER_SAMPLE_LENGTH) {
-    return (STEP_SAMPLES - sampleInStep) / FADER_SAMPLE_LENGTH;
+float Channel::nextSample() {
+  std::lock_guard<std::mutex> lock(mMutex);
+  if (mSignals.empty()) {
+    return 0.0f;
   }
-  return 1.0f;
+  float signalOutput = 0.0f;
+  for (auto &signal : mSignals) {
+    signalOutput += signal->nextSample();
+  }
+  float fadeFactor = updateFadeFactor();
+
+  if (std::abs(mFadeCurrent) < 0.0001f && mFadeTarget == 0.0f) {
+    mIsActive = false; // Deactivate the channel if the fade-out is complete
+  }
+  return (signalOutput * fadeFactor) /
+         mSignals.size(); // The max volume is 1.0f we normalize the output
 }
 
-size_t Channel::calculateCurrentSampleInStep(float timeInLoop) {
-  size_t sampleInLoop = static_cast<size_t>(timeInLoop * SAMPLE_RATE);
-  return sampleInLoop % static_cast<int>(STEP_SAMPLES);
-}
-
-void Channel::setSignalType(SignalType type) {
+void Channel::setSignalType(size_t signalIndex, SignalType type) {
+  std::lock_guard<std::mutex> lock(mMutex);
   switch (type) {
   case SignalType::SINE:
-    mSignal = std::make_shared<SineWave>(mSignal->getFrequency());
+    mSignals[signalIndex] =
+        std::make_shared<SineWave>(mSignals[signalIndex]->getFrequency());
     break;
   case SignalType::SQUARE:
-    mSignal = std::make_shared<SquareWave>(mSignal->getFrequency());
+    mSignals[signalIndex] =
+        std::make_shared<SquareWave>(mSignals[signalIndex]->getFrequency());
     break;
   case SignalType::SAW:
-    mSignal = std::make_shared<SawtoothWave>(mSignal->getFrequency());
+    mSignals[signalIndex] =
+        std::make_shared<SawtoothWave>(mSignals[signalIndex]->getFrequency());
     break;
   case SignalType::SILENCE:
   default:
-    mSignal = std::make_shared<SilentSignal>(mSignal->getFrequency());
+    mSignals[signalIndex] =
+        std::make_shared<SilentSignal>(mSignals[signalIndex]->getFrequency());
     break;
   }
 }
-void Channel::updatePatternStep(bool stepState, float timeInLoop) {
-  int currentStep = static_cast<int>((timeInLoop / 8.0) * PULSES) % PULSES;
-  mPattern[currentStep] = stepState;
+
+void Channel::activateChannel() {
+  std::lock_guard<std::mutex> lock(mMutex);
+  mFadeTarget = 1;
+  mIsActive = true;
+}
+void Channel::deactivateChannel() {
+  std::lock_guard<std::mutex> lock(mMutex);
+  mFadeTarget = 0;
 }
 
-void Channel::setPattern(const std::array<bool, PULSES> &pattern) {
-  mPattern = pattern;
-}
-void Channel::setFrequency(size_t frequency) {
-  if (mSignal) {
-    mSignal->setFrequency(frequency);
+void Channel::setSignalFrequency(size_t signalIndex, float frequency) {
+  std::lock_guard<std::mutex> lock(mMutex);
+  if (mSignals[signalIndex]) {
+    mSignals[signalIndex]->setFrequency(frequency);
   }
 }
-void Channel::setVolume(float volume) { mVolume = volume; }
-void Channel::setPosX(size_t x) { mPos_x = x; }
-void Channel::setPosY(size_t y) { mPos_y = y; }
-float Channel::getVolume() const { return mVolume; }
-size_t Channel::getPosX() const { return mPos_x; }
-size_t Channel::getPosY() const { return mPos_y; }
-void Channel::reset() {
-  mSignal = nullptr;
-  mVolume = 0.0f;
-  mPos_x = 0;
-  mPos_y = 0;
-  mPattern.fill(false);
+void Channel::setSignalAmplitude(size_t signalIndex, float volume) {
+  std::lock_guard<std::mutex> lock(mMutex);
+  mSignals[signalIndex]->setAmplitude(volume);
+}
+void Channel::setPosX(size_t x) {
+  std::lock_guard<std::mutex> lock(mMutex);
+  mPos_x = x;
+}
+void Channel::setPosY(size_t y) {
+  std::lock_guard<std::mutex> lock(mMutex);
+  mPos_y = y;
+}
+size_t Channel::getPosX() const {
+  std::lock_guard<std::mutex> lock(mMutex);
+  return mPos_x;
+}
+size_t Channel::getPosY() const {
+  std::lock_guard<std::mutex> lock(mMutex);
+  return mPos_y;
 }

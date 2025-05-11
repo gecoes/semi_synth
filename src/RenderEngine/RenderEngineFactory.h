@@ -1,3 +1,6 @@
+#ifndef RENDER_ENGINE_FACTORY_H
+#define RENDER_ENGINE_FACTORY_H
+
 #include "RenderEngine.h"
 
 class RenderEngineFactory {
@@ -5,6 +8,6 @@ public:
   RenderEngineFactory();
   ~RenderEngineFactory();
   static std::unique_ptr<RenderEngine> createDefault();
-  static std::unique_ptr<RenderEngine>
-  createWithOutput(std::unique_ptr<OutputSource> output);
 };
+
+#endif // RENDER_ENGINE_FACTORY_H

@@ -1,10 +1,10 @@
-#ifndef OUTPUTSOURCE_H
-#define OUTPUTSOURCE_H
+#ifndef AUDIO_OUTPUT_H
+#define AUDIO_OUTPUT_H
 #include <cstddef>
 
-class OutputSource {
+class AudioOutput {
 public:
-  virtual ~OutputSource() = default;
+  virtual ~AudioOutput() = default;
 
   virtual bool initialize() = 0;
 
@@ -15,4 +15,4 @@ public:
   virtual void stop() = 0;
 };
 
-#endif // OUTPUTSOURCE_H
+#endif // AUDIO_OUTPUT_H

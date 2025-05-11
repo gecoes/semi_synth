@@ -1,19 +1,28 @@
 #include "RenderEngine.h"
 
 RenderEngine::RenderEngine()
-    : mAudio(nullptr), mImage(nullptr), mTransport(nullptr),
-      mOutputSource(nullptr), mRunning(false) {}
+    : mAudio(nullptr), mImage(nullptr), mAudioOutput(nullptr),
+      mImageOutput(nullptr), mRunning(false) {}
 
 RenderEngine::RenderEngine(std::shared_ptr<AudioRenderer> audio,
-                           std::shared_ptr<ImageRenderer> image,
-                           std::shared_ptr<Transport> transport)
-    : mAudio(audio), mImage(image), mTransport(transport), mRunning(false) {}
+                           std::shared_ptr<ImageRenderer> image)
+    : mAudio(audio), mImage(image), mAudioOutput(nullptr),
+      mImageOutput(nullptr), mRunning(false) {}
 
-void RenderEngine::setOutputSource(std::shared_ptr<OutputSource> outputSource) {
-  mOutputSource = outputSource;
-  if (mOutputSource) {
-    if (!mOutputSource->initialize()) {
+void RenderEngine::setAudioOutput(std::shared_ptr<AudioOutput> outputSource) {
+  mAudioOutput = outputSource;
+  if (mAudioOutput) {
+    if (!mAudioOutput->initialize()) {
       throw std::runtime_error("Failed to initialize output source");
+    }
+  }
+}
+
+void RenderEngine::setImageOutput(std::shared_ptr<ImageOutput> imageOutput) {
+  mImageOutput = imageOutput;
+  if (mImageOutput) {
+    if (!mImageOutput->initialize()) {
+      throw std::runtime_error("Failed to initialize image output");
     }
   }
 }
@@ -26,15 +35,14 @@ void RenderEngine::loop() {
 
     mAudio->renderAudioBuffer(mBuffer, bufferSize);
 
-    if (mOutputSource->isReady()) {
-      mOutputSource->writeBuffer(mBuffer, bufferSize);
+    if (mAudioOutput->isReady()) {
+      mAudioOutput->writeBuffer(mBuffer, bufferSize);
     }
 
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed = end - start;
 
-    double targetDuration =
-        static_cast<double>(bufferSize) / mTransport->getSampleRate();
+    double targetDuration = static_cast<double>(bufferSize) / SAMPLE_RATE;
     double delay = targetDuration - elapsed.count();
 
     if (delay > 0)
