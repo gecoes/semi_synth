@@ -3,7 +3,7 @@
 
 #define SAMPLE_RATE 48000
 
-#define FADER_SAMPLE_LENGTH 500
+#define FADER_SAMPLE_LENGTH 250
 constexpr float TIME_PER_SAMPLE = 1.0f / SAMPLE_RATE;
 
 Channel::Channel()
