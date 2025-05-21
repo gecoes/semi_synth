@@ -39,6 +39,10 @@ void RenderEngine::loop() {
       mAudioOutput->writeBuffer(mBuffer, bufferSize);
     }
 
+    if (mImageOutput && mImageOutput->isReady()) {
+      mImageOutput->sendState(*mAudio->getSignalSource());
+    }
+
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed = end - start;
 

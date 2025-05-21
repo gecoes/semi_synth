@@ -122,3 +122,7 @@ size_t Channel::getPosY() const {
   std::lock_guard<std::mutex> lock(mMutex);
   return mPos_y;
 }
+
+std::shared_ptr<Signal> Channel::getSignal(size_t signalIndex) const {
+  return mSignals[signalIndex];
+}

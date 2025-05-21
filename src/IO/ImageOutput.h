@@ -2,6 +2,7 @@
 #ifndef IMAGEOUTPUT_H
 #define IMAGEOUTPUT_H
 
+#include "SignalSource.h"
 #include <cstddef>
 #include <vector>
 
@@ -13,7 +14,7 @@ public:
   virtual bool initialize() = 0;
 
   // Send visual data to the output target
-  virtual void writeFrame(const std::vector<float> &frameData) = 0;
+  virtual void sendState(const SignalSource &soruce) = 0;
 
   // Check if ready to write
   virtual bool isReady() const = 0;

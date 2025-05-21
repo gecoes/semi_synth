@@ -27,6 +27,19 @@ float Signal::getFrequency() const { return mFrequency; }
 
 float Signal::getAmplitude() const { return mAmplitude; }
 
+std::string Signal::getSignalType() const {
+  switch (mSignalType) {
+  case SignalType::SINE:
+    return "sin";
+  case SignalType::SQUARE:
+    return "square";
+  case SignalType::SAW:
+    return "saw";
+  default:
+    return "unknown";
+  }
+}
+
 void Signal::updatePhase() {
   mPhase += 2.0f * M_PI * mFrequency / mSampleRate;
   if (mPhase >= 2.0f * M_PI)

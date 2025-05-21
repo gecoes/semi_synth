@@ -21,6 +21,7 @@ public:
   void setSignalAmplitude(size_t signalIndex, float volume);
   void setPosX(size_t x);
   void setPosY(size_t y);
+  std::shared_ptr<Signal> getSignal(size_t signalIndex) const;
   float getSignalFrequency(size_t signalIndex) const;
   float getSignalAmplitude(size_t signalIndex) const;
   float getVolume() const;

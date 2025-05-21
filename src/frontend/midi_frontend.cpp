@@ -1,5 +1,6 @@
 // main.cpp
 #include "AlsaOutput.h"
+#include "ImageOutputUDP.h"
 #include "MidiInput.h"
 #include "RenderEngine.h"
 #include "RenderEngineFactory.h"
@@ -12,23 +13,23 @@
 int main() {
   auto input = std::make_unique<MidiInput>();
   auto alsaOutput = std::make_shared<AlsaOutput>();
+  auto imageOutput = std::make_shared<ImageOutputUDP>("127.0.0.1", 12345);
 
   RenderEngineFactory factory;
   auto renderEngine = factory.createDefault();
   renderEngine->setAudioOutput(alsaOutput);
+  renderEngine->setImageOutput(imageOutput);
   renderEngine->start();
 
   std::cout << "\n== Synth MIDI Ready ==" << std::endl;
-  std::cout << "Connecta un teclat MIDI i toca!" << std::endl;
-  std::cout << "Prem Ctrl+C per sortir.\n" << std::endl;
+  std::cout << "Ctrl+C to exit.\n" << std::endl;
 
-  // Bucle principal
   while (!input->shouldExit()) {
     input->processInput(*renderEngine->getAudioRenderer()->getSignalSource());
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
   }
 
   renderEngine->stop();
-  std::cout << "Sortint del sintetitzador MIDI." << std::endl;
+  std::cout << "Exiting MIDI synth." << std::endl;
   return 0;
 }

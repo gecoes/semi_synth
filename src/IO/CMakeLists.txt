@@ -5,7 +5,7 @@ add_library(io_alsa_output
 AlsaOutput.cpp
 )
 
-add_library(io_lib CLIInput.cpp KeyboardInput.cpp MidiInput.cpp
+add_library(io_lib CLIInput.cpp KeyboardInput.cpp MidiInput.cpp ImageOutputUDP.cpp
 )
 
 target_include_directories(io_lib
@@ -38,6 +38,9 @@ PUBLIC
     ${ALSA_LIBRARIES}
     ${SDL2_LIBRARIES}
     ${RTMIDI_LIBRARIES}
+    nlohmann_json::nlohmann_json
 )
+
+
 
 add_subdirectory(test)
