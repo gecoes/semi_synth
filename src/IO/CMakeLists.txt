@@ -37,7 +37,7 @@ target_link_libraries(io_lib
 PUBLIC
     ${ALSA_LIBRARIES}
     ${SDL2_LIBRARIES}
-    ${RTMIDI_LIBRARIES}
+    rtmidi
     nlohmann_json::nlohmann_json
 )
 

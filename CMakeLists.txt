@@ -19,12 +19,18 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(googletest)
 
+FetchContent_Declare(
+  RtMidi
+  GIT_REPOSITORY https://github.com/thestk/rtmidi.git
+  GIT_TAG        master
+)
+
+FetchContent_MakeAvailable(RtMidi)
+
+
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(ALSA REQUIRED alsa)
-
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(RTMIDI REQUIRED rtmidi)
 
 find_package(SDL2 REQUIRED)
 
