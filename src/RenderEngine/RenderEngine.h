@@ -9,19 +9,22 @@
 #include <memory>
 #include <thread>
 
-#define BUFFER_SIZE 1024  // 512 samples per channel
+#define BUFFER_SIZE 512   // 512 samples per channel
 #define SAMPLE_RATE 48000 // 48 kHz
 
-class RenderEngine {
+class RenderEngine
+{
 public:
   RenderEngine();
   RenderEngine(std::shared_ptr<AudioRenderer> audio,
                std::shared_ptr<ImageRenderer> imag);
   ~RenderEngine() { stop(); }
-  void setAudioRenderer(std::shared_ptr<AudioRenderer> audio) {
+  void setAudioRenderer(std::shared_ptr<AudioRenderer> audio)
+  {
     mAudio = audio;
   }
-  void setImageRenderer(std::shared_ptr<ImageRenderer> image) {
+  void setImageRenderer(std::shared_ptr<ImageRenderer> image)
+  {
     mImage = image;
   }
   void setAudioOutput(std::shared_ptr<AudioOutput> audioOutput);

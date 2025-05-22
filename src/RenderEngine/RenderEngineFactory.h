@@ -3,11 +3,13 @@
 
 #include "RenderEngine.h"
 
-class RenderEngineFactory {
+class RenderEngineFactory
+{
 public:
   RenderEngineFactory();
   ~RenderEngineFactory();
   static std::unique_ptr<RenderEngine> createDefault();
+  static std::unique_ptr<RenderEngine> createMultiSignals();
 };
 
 #endif // RENDER_ENGINE_FACTORY_H
