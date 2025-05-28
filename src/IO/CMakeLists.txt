@@ -5,7 +5,7 @@ add_library(io_alsa_output
 AlsaOutput.cpp
 )
 
-add_library(io_lib CLIInput.cpp KeyboardInput.cpp MidiInput.cpp ImageOutputUDP.cpp
+add_library(io_lib CLIInput.cpp KeyboardInput.cpp MidiInput.cpp ImageOutputUDP.cpp ArduinoInput.cpp
 )
 
 target_include_directories(io_lib

@@ -1,5 +1,6 @@
 // main.cpp
 #include "AlsaOutput.h"
+#include "ArduinoInput.h"
 #include "ImageOutputUDP.h"
 #include "MidiInput.h"
 #include "RenderEngine.h"
@@ -10,9 +11,9 @@
 #include <memory>
 #include <thread>
 
-int main()
-{
-  auto input = std::make_unique<MidiInput>();
+int main() {
+  auto midiInput = std::make_unique<MidiInput>();
+  auto arduinoInput = std::make_unique<ArduinoInput>();
   auto alsaOutput = std::make_shared<AlsaOutput>();
   auto imageOutput = std::make_shared<ImageOutputUDP>("127.0.0.1", 12345);
 
@@ -23,12 +24,17 @@ int main()
   renderEngine->start();
 
   std::cout << "\n== Synth MIDI Ready ==" << std::endl;
-  std::cout << "Ctrl+C to exit.\n"
-            << std::endl;
+  std::cout << "Ctrl+C to exit.\n" << std::endl;
 
-  while (!input->shouldExit())
-  {
-    input->processInput(*renderEngine->getAudioRenderer()->getSignalSource());
+  while (!midiInput->shouldExit()) {
+    SignalSource &signalSource =
+        *renderEngine->getAudioRenderer()->getSignalSource();
+    arduinoInput->processInput(signalSource);
+
+    if (!arduinoInput->isEditMode()) {
+      midiInput->processInput(
+          *renderEngine->getAudioRenderer()->getSignalSource());
+    }
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
   }
 
