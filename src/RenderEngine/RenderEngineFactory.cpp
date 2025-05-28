@@ -41,7 +41,9 @@ std::unique_ptr<RenderEngine> RenderEngineFactory::createMultiSignals()
     mixer->getChannels()[i]->setSignalFrequency(3, freq);
     mixer->getChannels()[i]->setSignalAmplitude(0, 1.0f);
     mixer->setChannelSignalType(i, 0, SignalType::SINE);
-    mixer->setChannelSignalType(i, 1, SignalType::SQUARE);
+    mixer->setChannelSignalType(i, 1, SignalType::SINE);
+    mixer->setChannelSignalType(i, 2, SignalType::SAW);
+    mixer->setChannelSignalType(i, 3, SignalType::SAW);
     mixer->getChannels()[i]->setSignalAmplitude(1, 1.0f);
     mixer->getChannels()[i]->setSignalAmplitude(2, 1.0f);
     mixer->getChannels()[i]->setSignalAmplitude(3, 1.0f);
