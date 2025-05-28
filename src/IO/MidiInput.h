@@ -9,7 +9,8 @@
 #include <set>
 #include <vector>
 
-class MidiInput : public InputSource {
+class MidiInput : public InputSource
+{
 public:
   MidiInput();
   ~MidiInput();
@@ -17,7 +18,6 @@ public:
   void processInput(SignalSource &signalSource) override;
   bool isEditMode() const override;
   int getSelectedChannel() const override;
-
   bool shouldExit() const;
 
 private:

@@ -13,25 +13,28 @@ MidiInput::MidiInput() : mExit(false), mSignalSource(nullptr)
     std::cout << "Initializing MIDI input..." << std::endl;
     std::cout << "Found " << nPorts << " MIDI port(s)." << std::endl;
 
+    bool opened = false;
+
     for (unsigned int i = 0; i < nPorts; ++i)
     {
       std::string name = mMidiIn->getPortName(i);
       std::cout << "  Port " << i << ": " << name << std::endl;
+
+      // Canvia això pel que surt realment al teu sistema si cal
+      if (name.find("Keystation") != std::string::npos || name.find("Mini 32") != std::string::npos)
+      {
+        mMidiIn->openPort(i);
+        std::cout << "[MIDI] Connectat a port: " << name << std::endl;
+        opened = true;
+        break;
+      }
     }
 
-    if (nPorts > 1)
+    if (!opened)
     {
-      mMidiIn->openPort(1); // ⬅️ o permetre triar dinàmicament
-      std::cout << "MIDI input listening on port 1..." << std::endl;
-    }
-    else if (nPorts > 0)
-    {
-      mMidiIn->openPort(0);
-      std::cout << "MIDI input listening on port 0..." << std::endl;
-    }
-    else
-    {
-      std::cerr << "No MIDI ports found." << std::endl;
+      std::cerr << "Midi port not found" << std::endl;
+      mExit = true;
+      return;
     }
 
     mMidiIn->ignoreTypes(false, false, false);

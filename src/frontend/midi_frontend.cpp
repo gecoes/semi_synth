@@ -11,30 +11,33 @@
 #include <memory>
 #include <thread>
 
-int main() {
+int main()
+{
   auto midiInput = std::make_unique<MidiInput>();
   auto arduinoInput = std::make_unique<ArduinoInput>();
   auto alsaOutput = std::make_shared<AlsaOutput>();
   auto imageOutput = std::make_shared<ImageOutputUDP>("127.0.0.1", 12345);
 
   RenderEngineFactory factory;
-  auto renderEngine = factory.createMultiSignals();
+  auto renderEngine = factory.createDefault();
   renderEngine->setAudioOutput(alsaOutput);
   renderEngine->setImageOutput(imageOutput);
   renderEngine->start();
 
   std::cout << "\n== Synth MIDI Ready ==" << std::endl;
-  std::cout << "Ctrl+C to exit.\n" << std::endl;
-
-  while (!midiInput->shouldExit()) {
-    SignalSource &signalSource =
-        *renderEngine->getAudioRenderer()->getSignalSource();
+  std::cout << "Ctrl+C to exit.\n"
+            << std::endl;
+  SignalSource &signalSource =
+      *renderEngine->getAudioRenderer()->getSignalSource();
+  while (!midiInput->shouldExit())
+  {
     arduinoInput->processInput(signalSource);
-
-    if (!arduinoInput->isEditMode()) {
+    if (!arduinoInput->isEditMode())
+    {
       midiInput->processInput(
-          *renderEngine->getAudioRenderer()->getSignalSource());
+          signalSource);
     }
+
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
   }
 
