@@ -9,58 +9,67 @@ RenderEngine::RenderEngine(std::shared_ptr<AudioRenderer> audio,
     : mAudio(audio), mImage(image), mAudioOutput(nullptr),
       mImageOutput(nullptr), mRunning(false) {}
 
-void RenderEngine::setAudioOutput(std::shared_ptr<AudioOutput> outputSource) {
+void RenderEngine::setAudioOutput(std::shared_ptr<AudioOutput> outputSource)
+{
   mAudioOutput = outputSource;
-  if (mAudioOutput) {
-    if (!mAudioOutput->initialize()) {
+  if (mAudioOutput)
+  {
+    if (!mAudioOutput->initialize())
+    {
       throw std::runtime_error("Failed to initialize output source");
     }
   }
 }
 
-void RenderEngine::setImageOutput(std::shared_ptr<ImageOutput> imageOutput) {
+void RenderEngine::setImageOutput(std::shared_ptr<ImageOutput> imageOutput)
+{
   mImageOutput = imageOutput;
-  if (mImageOutput) {
-    if (!mImageOutput->initialize()) {
+  if (mImageOutput)
+  {
+    if (!mImageOutput->initialize())
+    {
       throw std::runtime_error("Failed to initialize image output");
     }
   }
 }
 
-void RenderEngine::loop() {
-  const size_t bufferSize = BUFFER_SIZE;
+void RenderEngine::loop()
+{
+  const unsigned channels = 2;
+  const size_t samples_per_chunk = BUFFER_SIZE; // p. ex. 1024 mostres (512 frames estèreo)
+  const size_t frames_per_chunk = samples_per_chunk / channels;
 
-  while (mRunning) {
+  while (mRunning)
+  {
     auto start = std::chrono::high_resolution_clock::now();
 
-    mAudio->renderAudioBuffer(mBuffer, bufferSize);
-
-    if (mAudioOutput->isReady()) {
-      mAudioOutput->writeBuffer(mBuffer, bufferSize);
+    mAudio->renderAudioBuffer(mBuffer, samples_per_chunk);
+    if (mAudioOutput && mAudioOutput->isReady())
+    {
+      // writeBuffer accepta "mostres" i ell ja converteix a frames
+      mAudioOutput->writeBuffer(mBuffer, samples_per_chunk);
     }
 
-    if (mImageOutput && mImageOutput->isReady()) {
+    if (mImageOutput && mImageOutput->isReady())
+    {
       mImageOutput->sendState(*mAudio->getSignalSource());
     }
 
-    auto end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> elapsed = end - start;
-
-    double targetDuration = static_cast<double>(bufferSize) / SAMPLE_RATE;
-    double delay = targetDuration - elapsed.count();
-
-    if (delay > 0)
-      std::this_thread::sleep_for(std::chrono::duration<double>(delay));
+    // (Opcional) un petit yield per no monopolitzar la CPU si tot va molt sobrat:
+    // std::this_thread::yield();
+    // Evita dormir si pot fer-te arribar tard a l'escriptura següent.
   }
 }
 
-void RenderEngine::start() {
+void RenderEngine::start()
+{
   mAudioOutput->initialize();
   mRunning = true;
   mThread = std::thread(&RenderEngine::loop, this);
 }
 
-void RenderEngine::stop() {
+void RenderEngine::stop()
+{
   mRunning = false;
   if (mThread.joinable())
     mThread.join();

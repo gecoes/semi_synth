@@ -20,7 +20,7 @@ bool AlsaOutput::initialize()
   }
 
   err = snd_pcm_set_params(handle, SND_PCM_FORMAT_FLOAT_LE,
-                           SND_PCM_ACCESS_RW_INTERLEAVED, 2, SAMPLE_RATE, 1, 40000);
+                           SND_PCM_ACCESS_RW_INTERLEAVED, 2, SAMPLE_RATE, 1, 200000);
 
   if (err < 0)
   {
